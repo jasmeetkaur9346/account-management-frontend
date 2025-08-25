@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ConfirmDialog from './ConfirmDialog';
 
 const Header = () => {
   const { user, logout } = useAuth();
+  // NEW: confirm dialog state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      logout();
-    }
-  };
+  // const handleLogout = () => {
+  //   if (window.confirm('Are you sure you want to logout?')) {
+  //     logout();
+  //   }
+  // };
 
-  const getInitial = (name) => {
-    return name ? name.charAt(0).toUpperCase() : 'U';
-  };
+  const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : 'U');
 
   const getAvatarColor = (name) => {
     const colors = [
@@ -22,6 +24,19 @@ const Header = () => {
     ];
     const index = name ? name.charCodeAt(0) % colors.length : 0;
     return colors[index];
+  };
+
+   // OPEN confirm dialog instead of window.confirm
+  const handleLogoutClick = () => setShowConfirm(true);
+
+  const handleConfirmLogout = async () => {
+    try {
+      setBusy(true);
+      await logout(); // AuthContext handles clearing + API call
+    } finally {
+      setBusy(false);
+      setShowConfirm(false);
+    }
   };
 
   return (
@@ -40,16 +55,29 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Logout Button */}
+        {/* Logout Button (icon + text) */}
         <button
-          onClick={handleLogout}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+          onClick={handleLogoutClick}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-200 text-gray-700 bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md transition-all"
           title="Logout"
           aria-label="Logout"
         >
-          <LogOut size={20} className="text-gray-600" />
+          <LogOut size={18} className="text-white" />
+          <span className="font-medium">Logout</span>
         </button>
       </div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        open={showConfirm}
+        title="Logout from this device?"
+        message="You’ll need to sign in again to access your dashboard."
+        confirmText="Logout"
+        cancelText="Cancel"
+        busy={busy}
+        onConfirm={handleConfirmLogout}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };

@@ -215,9 +215,9 @@ const LoginForm = () => {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <p className="text-sm text-gray-500">
+          {/* <p className="text-sm text-gray-500">
             © 2025 Your App Name. All rights reserved.
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
