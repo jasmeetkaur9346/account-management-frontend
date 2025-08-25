@@ -33,6 +33,10 @@ const SummaryApi = {
         url : `${backendDomain}/api/update-account`,
         method: "post" 
     },
+    deleteAccount: {
+        url : `${backendDomain}/api/delete-account`,
+        method: "delete" 
+    },
     getAccountBalance: {
         url : `${backendDomain}/api/get-account-balance`,
         method: "get" 
